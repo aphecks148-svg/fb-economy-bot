@@ -1,0 +1,43 @@
+const fs = require('fs');
+const path = require('path');
+const DATA_DIR = path.join(__dirname, '../data');
+
+if(!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
+
+const db = {
+  economy: load('economy'),
+  pets: load('pets'),
+  farm: load('farm'),
+  stocks: load('stocks'),
+  marriage: load('marriage')
+};
+
+function load(file) {
+  try {
+    return JSON.parse(fs.readFileSync(`${DATA_DIR}/${file}.json`));
+  } catch {
+    return {};
+  }
+}
+
+function save(file) {
+  fs.writeFileSync(`${DATA_DIR}/${file}.json`, JSON.stringify(db, null, 2));
+}
+
+function getEconomy(uid) {
+  if(!db.economy[uid]) {
+    db.economy[uid] = {
+      balance: 1000, bank: 0, lastDaily: 0, streak: 0, lastCmd: 0, lastRob: 0,
+      investments: {}, properties: [], cars: [],
+      job: {name:'Unemployed', level:1, lastPay:0, xp:0},
+      loan: {amount:0, due:0}
+    };
+    save('economy');
+  }
+  return db.economy[uid];
+}
+
+function addCoins(uid, amount) { const eco = getEconomy(uid); eco.balance += amount; save('economy'); return eco.balance; }
+function deductCoins(uid, amount) { const eco = getEconomy(uid); if(eco.balance < amount) return false; eco.balance -= amount; save('economy'); return true; }
+
+module.exports = { db, getEconomy, addCoins, deductCoins, save };
