@@ -1,0 +1,6 @@
+//... same as v6.0 index.js I gave you...
+    if(cmd==='marry') reply = handlers.handleMarry(args, userId);
+    if(cmd==='divorce') reply = handlers.handleDivorce(userId);
+    if(cmd==='loan') reply = handlers.handleLoan(args, userId);
+    if(cmd==='give') reply = handlers.handleGive(args, userId);
+//... rest same...
